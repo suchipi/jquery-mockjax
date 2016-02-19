@@ -628,7 +628,9 @@
 				continue;
 			}
 
-			mockedAjaxCalls.push(requestSettings);
+			if ($.mockjaxSettings.retainAjaxCalls) {
+				mockedAjaxCalls.push(requestSettings);
+			}
 
 			// If logging is enabled, log the mock to the console
 			$.mockjaxSettings.log( mockHandler, requestSettings );
@@ -692,7 +694,9 @@
 		}
 
 		// We don't have a mock request
-		unmockedAjaxCalls.push(origSettings);
+		if ($.mockjaxSettings.retainAjaxCalls) {
+			unmockedAjaxCalls.push(origSettings);
+		}
 		if($.mockjaxSettings.throwUnmocked === true) {
 			throw new Error('AJAX not mocked: ' + origSettings.url);
 		}
@@ -808,7 +812,8 @@
 		headers: {
 			etag: 'IJF@H#@923uf8023hFO@I#H#',
 			'content-type' : 'text/plain'
-		}
+		},
+		retainAjaxCalls: true
 	};
 
 	$.mockjax = function(settings) {
@@ -827,6 +832,10 @@
 		mockedAjaxCalls = [];
 		unmockedAjaxCalls = [];
 	};
+	$.mockjax.clearRetainedAjaxCalls = function() {
+		mockedAjaxCalls = [];
+		unmockedAjaxCalls = [];
+	}
 	$.mockjax.handler = function(i) {
 		if ( arguments.length === 1 ) {
 			return mockHandlers[i];
